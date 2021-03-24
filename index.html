@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todooey - A Simple Todo List App</title>
+    <title>Todo App</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/vue"></script>
 </head>
@@ -15,19 +15,20 @@
             <h1 class="">My Todo List</h1>
             <div class="card">
                 <div class="flex">
-                    <input placeholder="Add new todo" />
-                    <button>Add</button>
+                    <input v-model="newItem" placeholder="Add new todo" />
+                    <button @click="addItem" :disabled="newItem.length === 0">Add</button>
                 </div>
             </div>
             <div class="card">
                 <div class="card-inner">
                     <h2>Todo</h2>
-                    <ul class="list">
-                        <li class="list-item">
-                            <div class="list-item-toggle"></div><span>Write code</span>
-                            <div class="list-item-delete">X</div>
+                    <ol class="list">
+                        <li class="list-item" :class="{completed: item.completed}" v-for="item in items">
+                            <div class="list-item-toggle" @click="toggleComplete(item)"></div>
+                            <span>{{ item.name }}</span>
+                            <div class="list-item-delete" @click="removeItem(item.id)">X</div>
                         </li>
-                    </ul>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -37,14 +38,34 @@
         new Vue({
             el: '#app',
             data: {
+                newItem: '',
                 items: [{
                     id: 1,
-                    name: 'Clean the fridge'
+                    name: 'Clean the fridge',
+                    completed: true,
                 }, {
                     id: 2,
-                    name: 'Walk the dogs'
+                    name: 'Walk the dogs',
+                    completed: false,
                 }]
-            }
+            },
+            methods: {
+                addItem: function() {
+                    this.items.push({
+                        id: this.items.length + 1,
+                        name: this.newItem,
+                        completed: false,
+                    });
+                    this.newItem = '';
+                },
+                toggleComplete: function(item) {
+                    item.completed = !item.completed;
+                },
+                removeItem: function(itemID) {
+                    this.items = this.items.filter((item) => item.id !== itemID);
+                }
+
+            },
         });
     </script>
 </body>
